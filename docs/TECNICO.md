@@ -369,7 +369,7 @@ La tarea 10 introduce trazabilidad de **quién hizo qué y cuándo** mediante la
 
 ## 6.8 Notificaciones del sistema
 
-La tarea 13 añade alertas de **stock bajo** mediante notificaciones nativas del sistema operativo (Electron `Notification`).
+La tarea 13 añade alertas de **stock bajo** y, posteriormente, de **lotes por vencer**, mediante notificaciones nativas del sistema operativo (Electron `Notification`).
 
 ### Detección (lógica pura)
 
@@ -380,19 +380,30 @@ La tarea 13 añade alertas de **stock bajo** mediante notificaciones nativas del
 | `findLowStock(products)` | Devuelve los productos cuyo `current_stock <= stock_min` con `stock_min > 0`, ordenados por gravedad (proporción `current_stock/stock_min` ascendente) |
 | `buildLowStockMessage(low)` | Texto de la notificación: resume los 3 primeros productos (`"Nombre: actual/mínimo"`) y un resumen `"y N más..."` |
 
+`src/shared/expiryLogic.ts` hace lo propio para vencimientos:
+
+| Función | Descripción |
+|---|---|
+| `buildExpiryMessage(expiring)` | Texto de la notificación de vencimiento: resume los 3 primeros lotes (`"Nombre (lote): Nd"` o `"Nombre (lote): vencido"`) y un resumen `"y N más..."` |
+
 ### Ciclo de revisión
 
 `src/main/notifications.ts`:
 
-- `getNotifySettings()` lee de `app_state` las claves `notify_low_stock` (`'1'`/`'0'`) y `notify_interval_min` (minutos, 5–1440).
+- `getNotifySettings()` lee de `app_state` las claves `notify_low_stock` (`'1'`/`'0'`), `notify_expiry` (`'1'`/`'0'`) y `notify_interval_min` (minutos, 5–1440).
 - `checkLowStockAndNotify()` consulta productos por debajo del mínimo y, si las notificaciones están habilitadas y `Notification.isSupported()`, muestra una notificación con el mensaje de `buildLowStockMessage`.
+- `checkExpiryAndNotify()` consulta lotes por vencer dentro del umbral `expiry_threshold_days` y, si `notify_expiry` está habilitada y `Notification.isSupported()`, muestra una notificación con el mensaje de `buildExpiryMessage`.
 - `showTestNotification()` dispara una notificación de prueba (canal `notifications:test`, gated por `settings.manage`).
-- `startLowStockWatcher()` arranca un `setInterval` cuando la app está lista (desde `src/main/index.ts`). El intervalo es el configurado (`notify_interval_min` minutos, mínimo 5; default 60), y se hace una primera revisión a los 15 s del arranque.
+- `startLowStockWatcher()` arranca un `setInterval` cuando la app está lista (desde `src/main/index.ts`). El intervalo es el configurado (`notify_interval_min` minutos, mínimo 5; default 60), y se hace una primera revisión a los 15 s del arranque. En cada revisión comprueba tanto stock bajo como lotes por vencer.
 
 ### Configuración
 
-- `SettingsInfo`/`SettingsInput` incluyen `notify_low_stock` y `notify_interval_min` validados por `settings:update`.
-- La tarjeta **Notificaciones** de Configuración (`Settings.tsx`) permite activar/desactivar, ajustar el intervalo y probar; `api.notifications.test(userId)` devuelve `{ shown: boolean }`.
+- `SettingsInfo`/`SettingsInput` incluyen `notify_low_stock`, `notify_expiry` y `notify_interval_min` validados por `settings:update`.
+- La tarjeta **Notificaciones** de Configuración (`Settings.tsx`) permite activar/desactivar ambas alertas, ajustar el intervalo y probar; `api.notifications.test(userId)` devuelve `{ shown: boolean }` y `api.notifications.check(userId)` devuelve `{ lowStock, expiring }`.
+
+### Captura de errores del renderer
+
+El build del renderer (`src/renderer/main.tsx`) registra listeners de `error` y `unhandledrejection` que reportan el fallo al canal `logger:error` del proceso principal, donde `logError()` (de `src/main/logger.ts`) lo persiste en el archivo `app.log` sin conspirar con la UI.
 
 ---
 
@@ -466,7 +477,7 @@ npm run format
 |---|---|
 | `dist/` | Renderer compilado (React/Vite) |
 | `dist-electron/` | Main process y preload compilados (CommonJS) |
-| `release/` | App empaquetada (`WarehOS Setup 0.1.0.exe` + `win-unpacked/`) |
+| `release/` | App empaquetada (`WarehOS Setup 1.0.2.exe` + `win-unpacked/`) |
 
 ---
 
@@ -655,7 +666,7 @@ Para agregar tests unitarios: crea archivos `*.test.ts` en `src/test/unit/` y ej
 - **Log de auditoría** (tabla `audit_log`): registro de creaciones/ediciones/eliminaciones, movimientos, inicios de sesión (éxito/fallo) y cambios de configuración, con página **Auditoría** solo para admin y filtros por acción, entidad y fechas (ver sección 6.7).
 - **Cifrado de la BD y bloqueo de login** (tarea 11): la base en disco se cifra con AES-256-GCM (clave guardada cifrada con `safeStorage` en `inventario.key`; la BD legacy se lee igual, ver sección 4); 5 intentos de login fallidos por usuario bloquean 5 minutos (claves `login_failures` en `app_state`).
 - **Más monedas e i18n** (tarea 12): 16 monedas centralizadas en `src/shared/currencies.ts` y UI en español/inglés/portugués (`src/renderer/lib/i18n.ts`, selector de idioma en Login y Configuración; ver secciones 6.10).
-- **Notificaciones del sistema** (tarea 13): alertas de stock bajo con `Notification` nativo, revisión periódica desde el main y tarjetas de configuración/prueba (ver sección 6.8).
+- **Notificaciones del sistema** (tarea 13): alertas de stock bajo y de lotes por vencer con `Notification` nativo, revisión periódica desde el main y tarjetas de configuración/prueba (ver sección 6.8).
 - **Onboarding y primeros pasos** (tarea 14): asistente de primera configuración (empresa + moneda) y checklist de guía en el Dashboard (ver sección 6.9).
 - **Robustez de Fase II** (tarea 15+): paginación de `DataTable` (20/página), `auth:me` + banner de cambio de contraseña por defecto, protecciones de `deleteUser` (admin, self, movimientos), `safeHandle` con errores normalizados y logs en `userData/logs/app.log` (ver secciones 3 y 9).
 

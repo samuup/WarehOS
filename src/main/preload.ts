@@ -63,6 +63,9 @@ export interface ElectronAPI {
     test: (userId: number) => Promise<unknown>;
     check: (userId: number) => Promise<unknown>;
   };
+  logs: {
+    error: (scope: string, message: string) => Promise<unknown>;
+  };
   backup: {
     export: (targetPath: string, password: string, userId: number) => Promise<unknown>;
     import: (sourcePath: string, password: string, userId: number) => Promise<unknown>;
@@ -141,6 +144,9 @@ const api: ElectronAPI = {
   notifications: {
     test: (userId) => ipcRenderer.invoke('notifications:test', userId),
     check: (userId) => ipcRenderer.invoke('notifications:check', userId),
+  },
+  logs: {
+    error: (scope, message) => ipcRenderer.invoke('logger:error', scope, message),
   },
   backup: {
     export: (targetPath, password, userId) =>

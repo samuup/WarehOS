@@ -59,6 +59,7 @@ import { getUpdaterStatus, checkNow, installUpdate, setUpdateConfig } from './up
 import {
   getNotifySettings,
   checkLowStockAndNotify,
+  checkExpiryAndNotify,
   showTestNotification,
 } from './notifications';
 import { can, type Capability } from '../shared/permissions';
@@ -75,6 +76,7 @@ function toProduct(row: ProductRow): Product {
 const EXPIRY_THRESHOLD_KEY = 'expiry_threshold_days';
 
 const NOTIFY_ENABLED_KEY = 'notify_low_stock';
+const NOTIFY_EXPIRY_KEY = 'notify_expiry';
 const NOTIFY_INTERVAL_KEY = 'notify_interval_min';
 
 const LOGIN_LOCK_KEY = 'login_failures';
@@ -1341,6 +1343,7 @@ logAudit(
     return ok<SettingsInfo>({
       expiry_threshold_days: getExpiryThresholdDays(),
       notify_low_stock: notify.enabled,
+      notify_expiry: notify.expiryEnabled,
       notify_interval_min: notify.intervalMin,
     });
   });
@@ -1374,6 +1377,19 @@ logAudit(
         `Notificaciones de stock bajo: ${input.notify_low_stock ? 'activadas' : 'desactivadas'}`,
       );
     }
+    if (input.notify_expiry !== undefined) {
+      run(
+        'INSERT INTO app_state (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+        [NOTIFY_EXPIRY_KEY, input.notify_expiry ? '1' : '0'],
+      );
+      logAudit(
+        userId,
+        'update',
+        'settings',
+        null,
+        `Notificaciones de vencimiento: ${input.notify_expiry ? 'activadas' : 'desactivadas'}`,
+      );
+    }
     if (input.notify_interval_min !== undefined) {
       const n = Number(input.notify_interval_min);
       if (!Number.isInteger(n) || n < 5 || n > 1440) {
@@ -1390,6 +1406,7 @@ logAudit(
     return ok<SettingsInfo>({
       expiry_threshold_days: getExpiryThresholdDays(),
       notify_low_stock: notify.enabled,
+      notify_expiry: notify.expiryEnabled,
       notify_interval_min: notify.intervalMin,
     });
   });
@@ -1424,7 +1441,7 @@ logAudit(
     return ok(company);
   });
 
-  // ── Notificaciones de stock bajo ─────────────────────
+  // ── Notificaciones de stock bajo y vencimientos ────
   safeHandle('notifications:test', async (_e, userId: number) => {
     const denied = requireCapability(userId, 'settings.manage');
     if (denied) return denied;
@@ -1434,7 +1451,16 @@ logAudit(
   safeHandle('notifications:check', async (_e, userId: number) => {
     const denied = requireCapability(userId, 'settings.manage');
     if (denied) return denied;
-    return ok(checkLowStockAndNotify());
+    return ok({
+      lowStock: checkLowStockAndNotify().count,
+      expiring: checkExpiryAndNotify().count,
+    });
+  });
+
+  // ── Logs del renderer (captura de errores de UI) ──
+  safeHandle('logger:error', async (_e, scope: string, message: string) => {
+    logError(scope || 'renderer', message || '');
+    return ok(true);
   });
 
   // ── Backup ────────────────────────────────────────────

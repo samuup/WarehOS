@@ -302,9 +302,10 @@ En **Configuración** también se ajusta el umbral de las alertas por vencimient
 - Cambia el número y pulsa **"Guardar"**. Aplica también a las próximas alertas del Dashboard.
 
 ### Notificaciones del sistema
-En **Configuración → Notificaciones** puedes controlar las alertas de **stock bajo** que el sistema operativo muestra (solo administradores):
-- **Activar/desactivar**: marca "Activar notificaciones de stock bajo" y pulsa **Guardar**.
-- **Cada cuánto revisar**: número de minutos entre revisiones (mínimo 5). Es el ritmo al que la app detecta productos por debajo de su mínimo.
+En **Configuración → Notificaciones** puedes controlar las alertas que el sistema operativo muestra (solo administradores):
+- **Activar stock bajo**: marca "Activar alertas de stock bajo" para avisar cuando un producto quede en o por debajo de su mínimo.
+- **Activar lotes por vencer**: marca "Activar alertas de lotes por vencer" para avisar cuando los lotes se acerquen a su fecha de vencimiento (según el umbral de "Alertas de vencimiento").
+- **Cada cuánto revisar**: número de minutos entre revisiones (mínimo 5). Es el ritmo al que la app detecta productos por debajo de su mínimo y lotes próximos a vencer.
 - **Probar notificación**: pulsa **"Probar notificación"** para ver cómo se verán las alertas en tu sistema.
 
 > 💡 Las notificaciones dependen de los **permisos de notificaciones** de tu sistema operativo; si no ves alertas, revísalos en la configuración de Windows/macOS.

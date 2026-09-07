@@ -27,14 +27,14 @@ La aplicación se compila para las tres plataformas desde el mismo código. Para
 El instalador se llama:
 
 ```
-WarehOS Setup 0.1.0.exe
+WarehOS Setup 1.0.2.exe
 ```
 
 Se encuentra en la carpeta `release/` del proyecto (o donde te hayan entregado la aplicación).
 
 **Paso 2: Ejecutar el instalador**
 
-1. Haz doble clic en `WarehOS Setup 0.1.0.exe`.
+1. Haz doble clic en `WarehOS Setup 1.0.2.exe`.
 2. Si Windows muestra una advertencia azul de **"Windows protegió su PC"** (SmartScreen):
    - Haz clic en **"Más información"**.
    - Haz clic en **"Ejecutar de todas formas"**.
@@ -67,7 +67,7 @@ La aplicación crea automáticamente un **usuario administrador** por defecto:
 
 ### macOS
 
-1. Ejecuta `WarehOS-0.1.0.dmg` (se genera en `release/` con `npm run build:mac`, **desde un equipo macOS**).
+1. Ejecuta `WarehOS-1.0.2.dmg` (se genera en `release/` con `npm run build:mac`, **desde un equipo macOS**).
 2. Arrastra **WarehOS** a la carpeta **Aplicaciones**.
 3. La primera vez, macOS puede bloquear la app por no estar firmada:
    - Haz clic derecho (o **Ctrl** + clic) sobre **WarehOS** en el Finder → **Abrir**.
@@ -79,11 +79,11 @@ La aplicación crea automáticamente un **usuario administrador** por defecto:
 Hay dos formatos disponibles (se generan en `release/` con `npm run build:linux`, normalmente desde Linux o CI):
 
 - **AppImage** — portable, sin instalación:
-  1. Marca el archivo como ejecutable: `chmod +x WareHOS-0.1.0.AppImage`.
+  1. Marca el archivo como ejecutable: `chmod +x WareHOS-1.0.2.AppImage`.
   2. Haz doble clic para ejecutarlo.
 - **Debian/Ubuntu (deb)** — instalación del sistema:
   ```
-  sudo apt install ./warehos_0.1.0_amd64.deb
+  sudo apt install ./warehos_1.0.2_amd64.deb
   ```
   3. Abre WarehOS desde el lanzador de aplicaciones y continúa con el **Paso 5** de instalación.
 

@@ -36,6 +36,7 @@ export function Settings() {
   const [success, setSuccess] = useState<string | null>(null);
   const [expiryDays, setExpiryDays] = useState(30);
   const [notifyEnabled, setNotifyEnabled] = useState(false);
+  const [notifyExpiry, setNotifyExpiry] = useState(false);
   const [notifyInterval, setNotifyInterval] = useState(60);
 
   const { status, fetchStatus, activate, isPro } = useLicenseStore();
@@ -66,6 +67,7 @@ export function Settings() {
       if (res.success && res.data) {
         setExpiryDays(res.data.expiry_threshold_days ?? 30);
         setNotifyEnabled(res.data.notify_low_stock ?? false);
+        setNotifyExpiry(res.data.notify_expiry ?? false);
         setNotifyInterval(res.data.notify_interval_min ?? 60);
       }
     });
@@ -88,7 +90,11 @@ export function Settings() {
     setError(null);
     setSuccess(null);
     const res = await api.settings.update(
-      { notify_low_stock: notifyEnabled, notify_interval_min: notifyInterval },
+      {
+        notify_low_stock: notifyEnabled,
+        notify_expiry: notifyExpiry,
+        notify_interval_min: notifyInterval,
+      },
       user.id,
     );
     if (res.success) {
@@ -482,7 +488,8 @@ export function Settings() {
         <h2 className="text-lg font-semibold text-gray-800 mb-4 dark:text-slate-100">Notificaciones del sistema</h2>
         <p className="text-sm text-gray-500 mb-4 dark:text-slate-400">
           La aplicación puede avisarte con una notificación nativa cuando algún producto quede
-          en o por debajo de su stock mínimo.
+          en o por debajo de su stock mínimo, o cuando los lotes se acerquen a su fecha de
+          vencimiento.
         </p>
         <div className="space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
@@ -494,6 +501,16 @@ export function Settings() {
               className="w-4 h-4 accent-primary-600"
             />
             <span className="text-sm text-gray-700 dark:text-slate-300">Activar alertas de stock bajo</span>
+          </label>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={notifyExpiry}
+              disabled={!canManageSettings}
+              onChange={(e) => setNotifyExpiry(e.target.checked)}
+              className="w-4 h-4 accent-primary-600"
+            />
+            <span className="text-sm text-gray-700 dark:text-slate-300">Activar alertas de lotes por vencer</span>
           </label>
           <div className="flex items-end gap-3">
             <div>

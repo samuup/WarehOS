@@ -15,12 +15,12 @@ Sistema de **gestión de inventarios** para empresas de cualquier rubro. Aplicac
 - 🏬 **Múltiples almacenes** — stock desglosado por sucursal/ubicación y vista global agregada; gestión de almacenes (Área admin) y transferencias de stock entre ellos.
 - 📊 **Dashboard** — métricas de inventario, valor total, productos con stock bajo y movimientos recientes.
 - 📈 **Reportes** — inventario actual con valorización, exportable a **PDF** y **CSV**.
-- 🏢 **Configuración** — datos de la empresa (incluida **moneda configurable** con 16 monedas), **idioma de la interfaz** (Español/English/Português), **notificaciones del sistema** para stock bajo, gestión de usuarios y **copias de seguridad** (backup/restauración) **cifradas con contraseña y portables a cualquier computadora**.
+- 🏢 **Configuración** — datos de la empresa (incluida **moneda configurable** con 16 monedas), **idioma de la interfaz** (Español/English/Português), **notificaciones del sistema** para stock bajo y lotes por vencer, gestión de usuarios y **copias de seguridad** (backup/restauración) **cifradas con contraseña y portables a cualquier computadora**.
 - 🎓 **Onboarding** — asistente de primera configuración (empresa + moneda) al primer inicio y guía de **primeros pasos** en el Dashboard hasta completar las tareas recomendadas.
 - 🔑 **Licenciamiento** — periodo de prueba de 30 días y activación **Pro** por máquina con clave firmada (RSA, 100% offline). La versión Pro desbloquea importación masiva, exportación de reportes (PDF/CSV), etiquetas de código de barras y copias de seguridad.
 - ⬆️ **Auto-actualización** (`electron-updater`) — comprobación manual o automática al iniciar, descarga con progreso y aplicación al reinicio, vía **GitHub Releases** (o un servidor propio configurable).
 - 💾 **Base de datos local** (SQLite) — tus datos son privados y seguros en tu propia máquina. Base cifrada en disco (AES-256-GCM con protección vía `safeStorage`), **bloqueo de login y de recuperación de contraseña** tras 5 intentos fallidos (5 minutos), **instancia única** (evita corrupción del archivo abriendo la app dos veces) y **auditoría** de cambios.
-- 🔔 **Notificaciones del sistema** — alertas de **stock bajo** revisadas automáticamente (intervalo configurable) y notificación de prueba desde Configuración.
+- 🔔 **Notificaciones del sistema** — alertas de **stock bajo** y de **lotes por vencer** revisadas automáticamente (intervalo configurable) y notificación de prueba desde Configuración.
 
 ---
 
@@ -41,9 +41,9 @@ La primera vez que abras la app, inicia sesión con:
 ## ⚙️ Instalación
 
 ### Usuario final
-1. **Windows**: ejecuta `WarehOS Setup 0.1.0.exe` (en la carpeta `release/`).
-2. **macOS**: abre `WarehOS-0.1.0.dmg` y arrastra la app a Aplicaciones.
-3. **Linux**: usa el `.AppImage` (portable) o instala el `.deb` con `sudo apt install ./warehos_0.1.0_amd64.deb`.
+1. **Windows**: ejecuta `WarehOS Setup 1.0.2.exe` (en la carpeta `release/`).
+2. **macOS**: abre `WarehOS-1.0.2.dmg` y arrastra la app a Aplicaciones.
+3. **Linux**: usa el `.AppImage` (portable) o instala el `.deb` con `sudo apt install ./warehos_1.0.2_amd64.deb`.
 4. Sigue los pasos del asistente de instalación e inicia sesión con las credenciales por defecto.
 
 > Guía detallada: [`docs/INSTALACION.md`](docs/INSTALACION.md)

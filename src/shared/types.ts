@@ -173,12 +173,14 @@ export interface ExpiringLot {
 export interface SettingsInfo {
   expiry_threshold_days: number;
   notify_low_stock: boolean;
+  notify_expiry: boolean;
   notify_interval_min: number;
 }
 
 export interface SettingsInput {
   expiry_threshold_days?: number;
   notify_low_stock?: boolean;
+  notify_expiry?: boolean;
   notify_interval_min?: number;
 }
 

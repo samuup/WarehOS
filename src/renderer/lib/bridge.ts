@@ -98,7 +98,10 @@ export interface RendererBridge {
   };
   notifications: {
     test: (userId: number) => Promise<ApiResult<{ shown: boolean }>>;
-    check: (userId: number) => Promise<ApiResult<{ count: number }>>;
+    check: (userId: number) => Promise<ApiResult<{ lowStock: number; expiring: number }>>;
+  };
+  logs: {
+    error: (scope: string, message: string) => Promise<ApiResult<null>>;
   };
   backup: {
     export: (targetPath: string, password: string, userId: number) => Promise<ApiResult<boolean>>;
