@@ -1,6 +1,6 @@
 {
   "name": "warehos",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Sistema moderno de gestión de inventarios",
   "main": "dist-electron/main/index.js",
   "author": "samuup",
