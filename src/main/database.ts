@@ -82,7 +82,7 @@ const MIGRATIONS = [
   `ALTER TABLE users ADD COLUMN security_question TEXT;`,
   `ALTER TABLE users ADD COLUMN security_answer_hash TEXT;`,
 
-  `ALTER TABLE companies ADD COLUMN currency TEXT NOT NULL DEFAULT 'PEN';`,
+  `ALTER TABLE companies ADD COLUMN currency TEXT NOT NULL DEFAULT 'VES';`,
 
   `ALTER TABLE products ADD COLUMN barcode TEXT;`,
 
@@ -196,6 +196,10 @@ const MIGRATIONS = [
   `DROP TABLE users_old;`,
 
   `PRAGMA legacy_alter_table = OFF; PRAGMA foreign_keys = ON;`,
+
+  `-- Catálogo de monedas reducido a VES/USD/EUR: normaliza cualquier moneda
+   -- guardada anteriormente (p. ej. PEN) al bolívar para las instalaciones existentes.`,
+  `UPDATE companies SET currency = 'VES' WHERE currency NOT IN ('VES','USD','EUR');`,
 ];
 
 function resolveDbKey(userDataPath: string): Buffer | null {

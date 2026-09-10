@@ -58,7 +58,7 @@ test('editar producto y guardar cambios', async () => {
 
   await expect(handle.win.locator('h1', { hasText: 'Productos' })).toBeVisible({ timeout: 10_000 });
   const updated = handle.win.locator('tr', { hasText: 'LAP-999' });
-  await expect(updated.getByText('S/ 2,000.00').first()).toBeVisible({ timeout: 10_000 });
+  await expect(updated.getByText(/2[.,]000[.,]00/).first()).toBeVisible({ timeout: 10_000 });
 });
 
 test('eliminar producto sin movimientos', async () => {

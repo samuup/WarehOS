@@ -62,7 +62,7 @@ export function computeStockTrend(rows: TrendRow[], days = 30): TrendPoint[] {
 
 export function labelDate(dateStr: string): string {
   const [y, m, d] = dateStr.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('es-PE', {
+  return new Date(y, m - 1, d).toLocaleDateString('es-VE', {
     day: '2-digit',
     month: 'short',
   });

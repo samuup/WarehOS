@@ -201,7 +201,7 @@ La generación de etiquetas vive en `src/renderer/lib/labelRenderer.ts` y el mod
 
 La app funciona **100% offline** con un esquema de licenciamiento firmado: el vendedor genera claves con una **clave privada RSA** y la app solo embebe la **clave pública**, verificando la firma localmente.
 
-- **Estados de licencia** — `LicenseStatus` (`src/shared/types.ts`): `pro` (licencia válida activada), `trial` (prueba inicial de 30 días) y `trial_expired` (prueba vencida → modo solo lectura).
+- **Estados de licencia** — `LicenseStatus` (`src/shared/types.ts`): `pro` (licencia válida activada), `trial` (prueba inicial de 15 días) y `trial_expired` (prueba vencida → modo solo lectura).
 - **Módulo** — `src/main/license.ts`:
   - `getMachineHash()`: huella de la máquina = SHA-256 de `hostname|platform|release|MAC` (repelente a duplicación de clave entre equipos).
   - `verifyLicenseKey()`: parsea `payload(sigB64)`, verifica firma **RSA-SHA256** con la clave pública embebida, valida que el `machine` coincida con la huella y que `expiresAt` no haya pasado.
@@ -334,7 +334,7 @@ El Dashboard renderiza gráficos con **Recharts** (dependencia ya presente), ali
 Detalles:
 - `dashboard:summary` se llama al montar el Dashboard; `stock_trend` re-fábrica la serie completa y se recorta a los últimos `days = 30` días (los días sin movimiento mantienen el último total conocido).
 - Paleta de colores fija (`CATEGORY_COLORS`) para la dona; el gráfico de área usa un gradiente de primaria y las barras `#10b981`.
-- `labelDate` (en `chartLogic.ts`) formatea las etiquetas `YYYY-MM-DD` a formato corto `es-PE`.
+- `labelDate` (en `chartLogic.ts`) formatea las etiquetas `YYYY-MM-DD` a formato corto `es-VE`.
 
 ---
 
@@ -430,10 +430,10 @@ La tarea 14 introduce un asistente de primera configuración y una guía de prim
 
 ## 6.10 Monedas e internacionalización (i18n)
 
-- **Catálogo de monedas** (`src/shared/currencies.ts`): 16 monedas con código ISO, nombre local y locale para formateo (`CURRENCIES`, `DEFAULT_CURRENCY = 'PEN'`, `isSupportedCurrency`, `currencyLocale`). `formatNumber(value, currency)` en `formatters.ts` formatea según el locale de la moneda (p. ej. `BRL` → `1.500,00`).
+- **Catálogo de monedas** (`src/shared/currencies.ts`): 3 monedas (Bolívares `VES`, Dólares `USD`, Euros `EUR`) con código ISO, nombre local y locale para formateo (`CURRENCIES`, `DEFAULT_CURRENCY = 'VES'`, `isSupportedCurrency`, `currencyLocale`). `formatNumber(value, currency)` en `formatters.ts` formatea según el locale de la moneda (p. ej. `EUR` → `1.500,00`).
 - **i18n liviano** (`src/renderer/lib/i18n.ts`): diccionarios `es`/`en`/`pt` (default `es`), hook `useI18n()` (basado en `useSyncExternalStore`) con `t(key)`/`setLang()`, persistencia en `localStorage['app_lang']` y `LANGUAGE_OPTIONS`. Sin dependencias externas (no i18next).
 - **Superficie traducida**: Sidebar, Login (con selector de idioma), título del Dashboard y Configuración (card **Idioma**). El idioma aplica también a la notificación de stock bajo vía mensajes fijados.
-- Tests: `src/test/unit/i18n.test.ts` y `formatters.test.ts` (BRL, JPY, GBP, CAD y formatos por locale).
+- Tests: `src/test/unit/i18n.test.ts` y `formatters.test.ts` (formatos por locale: VES, USD y EUR).
 
 ---
 
@@ -613,7 +613,7 @@ Mapa de permisos:
   - `importParser.test.ts` — mapeo de filas de importación Excel/CSV.
   - `barcode.test.ts` — normalización de códigos de barras.
   - `updaterConfig.test.ts` — validación/normalización de la URL del feed de actualizaciones.
-  - `trialLogic.test.ts` — lógica de modo trial (30 días).
+  - `trialLogic.test.ts` — lógica de modo trial (15 días).
   - `validation.test.ts` — normalización email/username/strings, passwords, contraseña de backup (mínimo 8), números no negativos, `clampInt`.
   - `i18n.test.ts` — diccionarios es/en/pt y persistencia de idioma.
   - `lowStockLogic.test.ts` — detección de stock bajo y mensaje de notificación.
@@ -645,7 +645,7 @@ Para agregar tests unitarios: crea archivos `*.test.ts` en `src/test/unit/` y ej
 - **Gestión avanzada de permisos por rol**: aplicada (ver sección "Permisos por rol"). El rol `viewer` es de solo lectura y `operator` no puede administrar usuarios ni configuración.
 - **Escaneo por cámara web**: pendiente (el lector USB ya está soportado; la cámara requeriría `html5-qrcode`/`@zxing`).
 - **Impresión directa sin diálogo del sistema**: pendiente (hoy el PDF se abre y lanza el diálogo de impresión nativo).
-- **Robustez del conteo de prueba**: el trial (30 días) está blindado contra cambios de reloj con marca de agua + almacenamiento dual (ver sección 6.3). Límites que quedan en una app 100% offline: congelar el reloj desde el primer uso (batería CMOS muerta o usuario que lo congela deliberadamente) impide medir el tiempo transcurrido, y borrar **todo** el estado (BD + archivo espejo) equivale a reinstalar y perder el catálogo. Protegerlo del todo exigiría un servidor de licencias (rompe el "100% offline").
+- **Robustez del conteo de prueba**: el trial (15 días) está blindado contra cambios de reloj con marca de agua + almacenamiento dual (ver sección 6.3). Límites que quedan en una app 100% offline: congelar el reloj desde el primer uso (batería CMOS muerta o usuario que lo congela deliberadamente) impide medir el tiempo transcurrido, y borrar **todo** el estado (BD + archivo espejo) equivale a reinstalar y perder el catálogo. Protegerlo del todo exigiría un servidor de licencias (rompe el "100% offline").
 - **Firma digital del instalador**: la app no está firmada; Windows muestra aviso de SmartScreen (código candidato a integrarse en CI).
 - **Refactor del trozo de IPC**: `ipc-handlers.ts` concentra toda la lógica de negocio (acceso directo a la BD); extraer repositorios/use-cases por dominio está documentado como deuda técnica (bajo riesgo, alto toque de archivos).
 - **Números de serie** por unidad y **deshacer movimientos**: pendientes (ver reconocidos en 6.5).
@@ -657,15 +657,15 @@ Para agregar tests unitarios: crea archivos `*.test.ts` en `src/test/unit/` y ej
 - Múltiples almacenes/sucursales: tablas `warehouses` + `product_warehouse_stock`, transferencias entre almacenes (`TRANSFER`), stock desglosado por almacén y agregado global (ver sección 6.4).
 - Importación masiva de productos desde Excel/CSV (`products:import` con `xlsx` + `dialog.showOpenDialog`).
 - Exportación del historial de movimientos a PDF y CSV.
-- Moneda configurable por empresa (columna `companies.currency`, 16 monedas soportadas, ver sección 6.10).
+- Moneda configurable por empresa (columna `companies.currency`), 3 monedas soportadas (VES/USD/EUR) con normalización automática a VES de valores heredados en instalaciones existentes (ver sección 6.10).
 - Campo **código de barras** en productos (EAN-13/UPC/Code128): columna `products.barcode` con índice único parcial, búsqueda por barcode en `products:list` y exacta vía `products:getByBarcode`, soportado en la importación masiva.
 - **Lector USB (keyboard-wedge)**: escaneo en búsqueda de productos y en registro de movimientos, sin dependencias nuevas (ver sección 6.1).
 - **Etiquetas de código de barras**: generación de PDF imprimible (jsbarcode + jsPDF) con tamaños 50×30, 60×40 y 80×50 mm (ver sección 6.2).
-- **Licenciamiento / activación**: trial de 30 días, activación Pro con clave firmada RSA por máquina, gating de funciones Pro (importación, exportaciones PDF/CSV, etiquetas y backup) y modo solo lectura cuando el trial expira (ver secciones 6.3 y 12).
+- **Licenciamiento / activación**: trial de 15 días, activación Pro con clave firmada RSA por máquina, gating de funciones Pro (importación, exportaciones PDF/CSV, etiquetas y backup) y modo solo lectura cuando el trial expira (ver secciones 6.3 y 12).
 - **Auto-actualización** (`electron-updater`): comprobación manual y opcional al iniciar, descarga con progreso y aplicación al reinicio; feed `generic` configurable en tiempo de ejecución desde **Configuración → Actualizaciones** (ver sección 14).
 - **Log de auditoría** (tabla `audit_log`): registro de creaciones/ediciones/eliminaciones, movimientos, inicios de sesión (éxito/fallo) y cambios de configuración, con página **Auditoría** solo para admin y filtros por acción, entidad y fechas (ver sección 6.7).
 - **Cifrado de la BD y bloqueo de login** (tarea 11): la base en disco se cifra con AES-256-GCM (clave guardada cifrada con `safeStorage` en `inventario.key`; la BD legacy se lee igual, ver sección 4); 5 intentos de login fallidos por usuario bloquean 5 minutos (claves `login_failures` en `app_state`).
-- **Más monedas e i18n** (tarea 12): 16 monedas centralizadas en `src/shared/currencies.ts` y UI en español/inglés/portugués (`src/renderer/lib/i18n.ts`, selector de idioma en Login y Configuración; ver secciones 6.10).
+- **Monedas e i18n** (tarea 12): 3 monedas (VES/USD/EUR) centralizadas en `src/shared/currencies.ts` y UI en español/inglés/portugués (`src/renderer/lib/i18n.ts`, selector de idioma en Login y Configuración; ver secciones 6.10).
 - **Notificaciones del sistema** (tarea 13): alertas de stock bajo y de lotes por vencer con `Notification` nativo, revisión periódica desde el main y tarjetas de configuración/prueba (ver sección 6.8).
 - **Onboarding y primeros pasos** (tarea 14): asistente de primera configuración (empresa + moneda) y checklist de guía en el Dashboard (ver sección 6.9).
 - **Robustez de Fase II** (tarea 15+): paginación de `DataTable` (20/página), `auth:me` + banner de cambio de contraseña por defecto, protecciones de `deleteUser` (admin, self, movimientos), `safeHandle` con errores normalizados y logs en `userData/logs/app.log` (ver secciones 3 y 9).

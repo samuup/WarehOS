@@ -13,17 +13,21 @@ function resolveCurrency(currency: string): { locale: string; code: string } {
   return isSupportedCurrency(currency) ? CURRENCY_LOCALE[currency] : CURRENCY_LOCALE[DEFAULT_CURRENCY];
 }
 
-export function formatCurrency(value: number, currency = 'PEN'): string {
+export function formatCurrency(value: number, currency = 'VES'): string {
   const cfg = resolveCurrency(currency);
-  return new Intl.NumberFormat(cfg.locale, {
+  const formatted = new Intl.NumberFormat(cfg.locale, {
     style: 'currency',
     currency: cfg.code,
   }).format(value);
+  if (cfg.code === 'VES') {
+    return formatted.replace(/Bs\.?S?/, 'Bs.');
+  }
+  return formatted;
 }
 
 export function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('es-PE', {
+  return date.toLocaleDateString('es-VE', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -34,7 +38,7 @@ export function formatDate(dateStr: string): string {
 
 export function formatExpiry(date: string | null | undefined): string {
   if (!date) return '—';
-  return new Date(`${date}T00:00:00`).toLocaleDateString('es-PE', {
+  return new Date(`${date}T00:00:00`).toLocaleDateString('es-VE', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -58,7 +62,7 @@ export function expiryStatusLabel(status: ExpiryBadgeStatus): string {
 }
 
 export function formatNumber(value: number, currency?: string): string {
-  return new Intl.NumberFormat(currency ? currencyLocale(currency) : 'es-PE').format(value);
+  return new Intl.NumberFormat(currency ? currencyLocale(currency) : 'es-VE').format(value);
 }
 
 export const MOVEMENT_LABELS: Record<string, string> = {

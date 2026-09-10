@@ -65,7 +65,7 @@ export function Dashboard() {
     fetchCompany();
   }, [fetchDashboard, fetchCompany]);
 
-  const currency = company?.currency || 'PEN';
+  const currency = company?.currency || 'VES';
 
   if (!dashboard) {
     return (

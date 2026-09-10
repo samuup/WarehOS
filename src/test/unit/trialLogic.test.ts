@@ -12,14 +12,14 @@ describe('computeTrialStatus', () => {
       nowMs: firstRun() + 10 * MS_PER_DAY,
       trialDays: DEFAULT_TRIAL_DAYS,
     });
-    expect(res.trialDaysLeft).toBe(20);
+    expect(res.trialDaysLeft).toBe(5);
     expect(res.expired).toBe(false);
   });
 
   it('redondea hacia arriba un día fraccional restante', () => {
     const res = computeTrialStatus({
       firstRunMs: firstRun(),
-      nowMs: firstRun() + 29.1 * MS_PER_DAY,
+      nowMs: firstRun() + 14.1 * MS_PER_DAY,
       trialDays: DEFAULT_TRIAL_DAYS,
     });
     expect(res.trialDaysLeft).toBe(1);

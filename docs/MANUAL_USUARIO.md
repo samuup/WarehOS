@@ -44,7 +44,7 @@ Al abrir la aplicación, verás la pantalla de **Inicio de sesión**.
 Si la aplicación aún no tiene los datos de tu empresa, al iniciar sesión como administrador verás el asistente **"Bienvenido a WarehOS"**:
 
 1. Pulsa **Continuar**.
-2. Completa el **nombre de tu empresa** (obligatorio), RUC, teléfono, email, dirección y elige tu **moneda** (soles, dólares, euros y más).
+2. Completa el **nombre de tu empresa** (obligatorio), RUC, teléfono, email, dirección y elige tu **moneda** (bolívares, dólares o euros).
 3. Pulsa **Guardar y empezar**.
 
 Puedes pulsar **Omitir** si quieres hacerlo después; también puedes editar todo en **Configuración → Datos de la empresa**.
@@ -178,7 +178,9 @@ Si tienes un catálogo en una hoja de cálculo, puedes cargarlo de una sola vez 
 | `costo` | `cost` / `cost_price` | Precio de costo |
 | `precio_venta` | `price` / `sale_price` | Precio de venta |
 
-> Los productos con **SKU duplicado** o **código de barras duplicado** se omiten para no dañar el catálogo. Primera fila = encabezados.
+> **Formatos de archivo aceptados:** separados por coma, punto y coma o tabulador (Excel en español exporta con `;`); con o sin BOM; en UTF-8, UTF-16 o Latin-1 (acentos como `ñ`/`á` se leen bien). Los precios aceptan coma o punto decimal (`1,50` o `1.50`) y separador de miles (`1.234,56`).
+
+> Los productos con **SKU duplicado** o **código de barras duplicado** se omiten para no dañar el catálogo. Primera fila = encabezados. Los encabezados pueden llevar espacios, mayúsculas o acentos (`Precio de Venta`, `Código de barras`).
 
 ---
 
@@ -288,7 +290,7 @@ Campos:
 - **Teléfono**
 - **Email**
 - **RUC / ID Fiscal**
-- **Moneda**: la moneda en la que se muestran los precios y valores del inventario. Soporta 16 monedas (Soles, Dólares, Euros, Reales, Libras, Yenes, Pesos colombianos/mexicanos/argentinos/chilenos, Bolivianos, Guaraníes, Quetzales, Colones costarricenses, etc.).
+- **Moneda**: la moneda en la que se muestran los precios y valores del inventario. Soporta 3 monedas: **Bolívares (VES), Dólares (USD) y Euros (EUR)**.
 
 1. Completa los campos.
 2. Elige la **moneda** que usas (los precios y reportes se mostrarán con ella).
@@ -320,7 +322,7 @@ WarehOS incluye un **tema oscuro** para trabajar cómodamente con poca luz:
 
 ## 9. Licencia y activación
 
-WarehOS funciona con un **periodo de prueba de 30 días**. Mientras la licencia de prueba está activa puedes usar todas las funciones; al vencer, la aplicación pasa a **modo solo lectura** (puedes consultar datos pero no modificarlos).
+WarehOS funciona con un **periodo de prueba de 15 días**. Mientras la licencia de prueba está activa puedes usar todas las funciones; al vencer, la aplicación pasa a **modo solo lectura** (puedes consultar datos pero no modificarlos).
 
 ### Funciones de la versión Pro
 La **versión Pro** desbloquea funciones adicionales:

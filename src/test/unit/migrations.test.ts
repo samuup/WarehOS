@@ -411,3 +411,34 @@ describe('Migración de email a username', () => {
     ).toThrow();
   });
 });
+
+// Mantener sincronizado con el paso de normalización de moneda en src/main/database.ts
+describe('Migración de moneda (catálogo VES/USD/EUR)', () => {
+  it('normaliza a VES las monedas que ya no están soportadas', () => {
+    const db = new SQL.Database();
+    dbs.push(db);
+    db.run(`CREATE TABLE companies (
+      id INTEGER PRIMARY KEY CHECK(id = 1),
+      currency TEXT NOT NULL DEFAULT 'PEN'
+    );`);
+    db.run(`INSERT INTO companies (id, currency) VALUES (1, 'PEN')`);
+
+    db.run(`UPDATE companies SET currency = 'VES' WHERE currency NOT IN ('VES','USD','EUR')`);
+
+    expect(db.exec('SELECT currency FROM companies')[0].values).toEqual([['VES']]);
+  });
+
+  it('conserva USD y EUR al normalizar', () => {
+    const db = new SQL.Database();
+    dbs.push(db);
+    db.run(`CREATE TABLE companies (
+      id INTEGER PRIMARY KEY CHECK(id = 1),
+      currency TEXT NOT NULL DEFAULT 'PEN'
+    );`);
+    db.run(`INSERT INTO companies (id, currency) VALUES (1, 'EUR')`);
+
+    db.run(`UPDATE companies SET currency = 'VES' WHERE currency NOT IN ('VES','USD','EUR')`);
+
+    expect(db.exec('SELECT currency FROM companies')[0].values).toEqual([['EUR']]);
+  });
+});

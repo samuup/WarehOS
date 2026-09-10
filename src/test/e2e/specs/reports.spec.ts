@@ -50,7 +50,7 @@ test('el reporte resume productos, unidades y valor total', async () => {
 
   await expect(handle.win.getByText('Productos: 2')).toBeVisible({ timeout: 10_000 });
   await expect(handle.win.getByText('Unidades totales: 4')).toBeVisible();
-  await expect(handle.win.getByText('3,010.00')).toBeVisible();
+  await expect(handle.win.getByText(/3[.,]010[.,]00/)).toBeVisible();
 
   const row = handle.win.locator('tr', { hasText: 'LAP-R1' });
   await expect(row.getByText('Laptop RPT')).toBeVisible();

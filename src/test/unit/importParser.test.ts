@@ -77,4 +77,60 @@ describe('mapImportRow', () => {
     const row = mapImportRow({ nombre: 'Agua', sku: 'AG-1' });
     expect(row?.barcode).toBe('');
   });
+
+  it('parsa números con coma decimal (Europa/América Latina)', () => {
+    const row = mapImportRow({
+      nombre: 'Arroz',
+      sku: 'AR-1',
+      costo: '1,50',
+      precio_venta: '0,75',
+      stock_inicial: '10,5',
+    });
+    expect(row?.costo).toBe(1.5);
+    expect(row?.precio_venta).toBe(0.75);
+    expect(row?.stock_inicial).toBe(10.5);
+  });
+
+  it('parsa números con punto de miles y coma decimal', () => {
+    const row = mapImportRow({ nombre: 'TV', sku: 'TV-1', costo: '1.234,56' });
+    expect(row?.costo).toBe(1234.56);
+  });
+
+  it('parsa números con coma de miles y punto decimal', () => {
+    const row = mapImportRow({ nombre: 'TV', sku: 'TV-1', costo: '1,234.56' });
+    expect(row?.costo).toBe(1234.56);
+  });
+
+  it('trata un separador con 3 dígitos finales como miles', () => {
+    expect(mapImportRow({ nombre: 'A', sku: 'A', costo: '1.234' })?.costo).toBe(1234);
+    expect(mapImportRow({ nombre: 'A', sku: 'A', costo: '1,234' })?.costo).toBe(1234);
+  });
+
+  it('mantiene números inválidos como undefined', () => {
+    expect(mapImportRow({ nombre: 'A', sku: 'A', costo: '1.2.3' })?.costo).toBeUndefined();
+  });
+
+  it('acepta encabezados con espacios y acentos (hojas reales)', () => {
+    const row = mapImportRow({
+      '  Nombre  ': 'Fideo',
+      'SKU': 'FI-1',
+      'Precio de Venta': '2,50',
+      'Código de barras': '7501',
+      'Stock Inicial': '8',
+    });
+    expect(row?.nombre).toBe('Fideo');
+    expect(row?.precio_venta).toBe(2.5);
+    expect(row?.barcode).toBe('7501');
+    expect(row?.stock_inicial).toBe(8);
+  });
+
+  it('acepta sinónimos comunes de encabezados', () => {
+    const row = mapImportRow({ producto: 'Leche', referencia: 'LE-1', rubro: 'Lácteos', um: 'l', existencias: '3', costo_unitario: '1.2' });
+    expect(row?.nombre).toBe('Leche');
+    expect(row?.sku).toBe('LE-1');
+    expect(row?.categoria).toBe('Lácteos');
+    expect(row?.unidad).toBe('l');
+    expect(row?.stock_inicial).toBe(3);
+    expect(row?.costo).toBe(1.2);
+  });
 });

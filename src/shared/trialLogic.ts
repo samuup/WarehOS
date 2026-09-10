@@ -1,5 +1,5 @@
 export const MS_PER_DAY = 86400000;
-export const DEFAULT_TRIAL_DAYS = 30;
+export const DEFAULT_TRIAL_DAYS = 15;
 
 export interface TrialComputation {
   trialDaysLeft: number;

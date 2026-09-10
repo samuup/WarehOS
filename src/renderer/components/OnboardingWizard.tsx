@@ -20,7 +20,7 @@ export function OnboardingWizard() {
     phone: '',
     email: '',
     address: '',
-    currency: 'PEN',
+    currency: 'VES',
   });
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -37,7 +37,7 @@ export function OnboardingWizard() {
         phone: company.phone || '',
         email: company.email || '',
         address: company.address || '',
-        currency: company.currency || 'PEN',
+        currency: company.currency || 'VES',
       });
     }
   }, [company]);
@@ -103,7 +103,7 @@ export function OnboardingWizard() {
           </p>
           <ul className="text-sm text-gray-600 space-y-2 list-disc list-inside dark:text-slate-400">
             <li>Configura los datos de tu empresa</li>
-            <li>Elige tu moneda (soles, dólares, euros y más)</li>
+            <li>Elige tu moneda (bolívares, dólares, euros)</li>
             <li>Empieza a registrar productos y movimientos</li>
           </ul>
           <div className="flex justify-end gap-3">

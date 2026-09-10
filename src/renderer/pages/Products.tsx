@@ -35,7 +35,7 @@ export function Products() {
   const canManage = can(role, 'products.manage');
   const canManageCats = can(role, 'categories.manage');
   const isPro = useLicenseStore((s) => s.isPro);
-  const currency = company?.currency || 'PEN';
+  const currency = company?.currency || 'VES';
 
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<number | 0>(0);

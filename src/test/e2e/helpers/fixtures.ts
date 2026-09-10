@@ -10,6 +10,14 @@ export function writeCsvFixture(rows: string[][]): string {
   return file;
 }
 
+/** Escribe un archivo con contenido bruto (string o Buffer) y devuelve su ruta. */
+export function writeFixture(content: string | Buffer, filename = 'inventario.csv'): string {
+  const dir = mkdtempSync(path.join(tmpdir(), 'warehos-fixture-'));
+  const file = path.join(dir, filename);
+  writeFileSync(file, content);
+  return file;
+}
+
 /** Crea un directorio temporal para exportaciones (CSV/PDF). */
 export function downloadDir(prefix = 'warehos-exports-'): string {
   return mkdtempSync(path.join(tmpdir(), prefix));

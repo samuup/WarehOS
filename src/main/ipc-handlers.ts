@@ -10,6 +10,7 @@ import {
 import { calculateNewStock } from '../shared/stockLogic';
 import { fefoAllocate, redistributeLots } from '../shared/lotLogic';
 import { mapImportRow } from '../shared/importParser';
+import { parseCsvBuffer } from '../shared/csvImport';
 import { normalizeBarcode } from '../shared/barcode';
 import {
   normalizeUsername,
@@ -914,9 +915,14 @@ safeHandle('products:import', async (_e, userId: number) => {
     let rows: ImportRow[];
     try {
       const buf = fs.readFileSync(filePath);
-      const workbook = XLSX.read(buf, { type: 'buffer', raw: true });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: '' });
+      const isCsv = /\.csv$/i.test(filePath);
+      const json = isCsv
+        ? parseCsvBuffer(buf).rows
+        : (() => {
+            const workbook = XLSX.read(buf, { type: 'buffer', raw: true });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            return XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: '' });
+          })();
       rows = json
         .map(mapImportRow)
         .filter((r): r is ImportRow => r !== null && !!r.nombre);
@@ -1329,7 +1335,7 @@ logAudit(
     const rows = all<InventoryReportItem>(
       `SELECT p.id as product_id, p.name as product_name, p.sku as product_sku,
               c.name as category_name, p.unit, p.current_stock,
-              p.cost_price, (p.current_stock * p.cost_price) as stock_value
+              p.cost_price, ROUND(p.current_stock * p.cost_price, 2) as stock_value
        FROM products p
        LEFT JOIN categories c ON c.id = p.category_id
        ORDER BY p.name`,
@@ -1423,7 +1429,7 @@ logAudit(
     if (license) return license;
     const name = cleanString(input?.name, 120);
     if (!isNonBlank(name, 120)) return fail('El nombre de la empresa es obligatorio');
-    if (!isSupportedCurrency(input?.currency ?? 'PEN')) return fail('La moneda no es válida');
+    if (!isSupportedCurrency(input?.currency ?? 'VES')) return fail('La moneda no es válida');
     run(
       'UPDATE companies SET name=?, address=?, phone=?, email=?, tax_id=?, currency=? WHERE id=1',
       [

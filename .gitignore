@@ -12,3 +12,4 @@ coverage/
 test-results/
 playwright-report/
 *.tsbuildinfo
+release-1.0.3/

@@ -50,7 +50,7 @@ test('métricas: productos, valor total y stock bajo', async () => {
   await expect(productos.locator('p.text-2xl')).toHaveText('2', { timeout: 10_000 });
 
   const valor = handle.win.locator('.card', { hasText: 'Valor total del inventario' });
-  await expect(valor.locator('p.text-2xl')).toContainText('3,010.00', { timeout: 10_000 });
+  await expect(valor.locator('p.text-2xl')).toContainText(/3[.,]010[.,]00/, { timeout: 10_000 });
 
   const bajo = handle.win.locator('.card', { hasText: 'Productos con stock bajo' });
   await expect(bajo.locator('p.text-2xl')).toHaveText('1', { timeout: 10_000 });

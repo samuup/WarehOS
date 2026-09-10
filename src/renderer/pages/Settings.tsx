@@ -25,7 +25,7 @@ export function Settings() {
     phone: '',
     email: '',
     tax_id: '',
-    currency: 'PEN',
+    currency: 'VES',
   });
   const [pw, setPw] = useState({ current: '', next: '', confirm: '' });
   const [sq, setSq] = useState({ question: '', answer: '' });
@@ -132,7 +132,7 @@ export function Settings() {
         phone: company.phone,
         email: company.email,
         tax_id: company.tax_id,
-        currency: company.currency || 'PEN',
+        currency: company.currency || 'VES',
       });
     }
   }, [company]);

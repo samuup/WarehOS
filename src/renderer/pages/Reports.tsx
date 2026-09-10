@@ -21,7 +21,7 @@ export function Reports() {
 
   const totalValue = inventoryReport.reduce((sum, item) => sum + item.stock_value, 0);
   const totalUnits = inventoryReport.reduce((sum, item) => sum + item.current_stock, 0);
-  const currency = company?.currency || 'PEN';
+  const currency = company?.currency || 'VES';
 
   const exportCSV = () => {
     const headers = ['Producto', 'SKU', 'Categoría', 'Unidad', 'Stock', 'Costo unit.', 'Valor'];
@@ -39,7 +39,7 @@ export function Reports() {
       .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
       .join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
