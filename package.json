@@ -1,6 +1,6 @@
 {
   "name": "warehos",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Sistema moderno de gestión de inventarios",
   "main": "dist-electron/main/index.js",
   "author": "samuup",
@@ -112,7 +112,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "installerIcon": "build/icon.ico",
-      "uninstallerIcon": "build/icon.ico"
+      "uninstallerIcon": "build/icon.ico",
+      "include": "build/installer.nsh"
     },
     "afterPack": "build/after-pack.cjs",
     "publish": [
