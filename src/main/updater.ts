@@ -1,7 +1,8 @@
 import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import type { UpdateInfo as UpdateInfoDto, ProgressInfo } from 'electron-updater';
-import { get, run, persist } from './database';
+import { get, run, persist, closeDatabase } from './database';
+import { stopLowStockWatcher } from './notifications';
 import { normalizeFeedUrl } from '../shared/updaterConfig';
 import type {
   UpdaterStatus,
@@ -164,7 +165,14 @@ export function installUpdate(): { ok: boolean; reason?: string } {
   if (runtime.status !== 'downloaded') {
     return { ok: false, reason: 'Aún no se ha descargado ninguna actualización.' };
   }
-  autoUpdater.quitAndInstall(false, true);
+  stopLowStockWatcher();
+  closeDatabase();
+  for (const win of BrowserWindow.getAllWindows()) {
+    win.destroy();
+  }
+  // Instalación en modo silencioso: cierra la app antes de lanzar el instalador
+  // para que NSIS no detecte el proceso abierto ni bloquee el Uninstaller.
+  autoUpdater.quitAndInstall(true, true);
   return { ok: true };
 }
 

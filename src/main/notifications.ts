@@ -120,6 +120,7 @@ export function showTestNotification(): { shown: boolean } {
 }
 
 let watcherTimer: NodeJS.Timeout | null = null;
+let initialWatchTimer: NodeJS.Timeout | null = null;
 
 export function startLowStockWatcher(initialDelayMs = 15000): void {
   if (watcherTimer) return;
@@ -128,8 +129,19 @@ export function startLowStockWatcher(initialDelayMs = 15000): void {
     checkLowStockAndNotify();
     checkExpiryAndNotify();
   }, Math.max(intervalMin, 1) * 60_000);
-  setTimeout(() => {
+  initialWatchTimer = setTimeout(() => {
     checkLowStockAndNotify();
     checkExpiryAndNotify();
   }, initialDelayMs);
+}
+
+export function stopLowStockWatcher(): void {
+  if (watcherTimer) {
+    clearInterval(watcherTimer);
+    watcherTimer = null;
+  }
+  if (initialWatchTimer) {
+    clearTimeout(initialWatchTimer);
+    initialWatchTimer = null;
+  }
 }

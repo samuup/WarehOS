@@ -343,6 +343,18 @@ export function persist(dbHandle?: SqlJsDatabase) {
   fs.renameSync(tmp, dbPath);
 }
 
+export function closeDatabase(): void {
+  if (db) {
+    try {
+      persist(db);
+      db.close();
+    } catch {
+      // Ignorar errores de cierre: la app está saliendo.
+    }
+    db = null;
+  }
+}
+
 export function isDbEncryptionEnabled(): boolean {
   return encryptionEnabled;
 }
